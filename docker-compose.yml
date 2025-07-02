@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      - POSTGRES_USER=supplychain
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=supplychain_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  llm:
+    image: ghcr.io/huggingface/text-generation-inference:latest
+    environment:
+      - MODEL_ID=mistralai/Mistral-7B-Instruct-v0.2
+      - HUGGING_FACE_HUB_TOKEN=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
+    ports:
+      - "8080:80"
+    networks:
+      - sc_network
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://supplychain:password@postgres:5432/supplychain_db
+      - TGI_URL=http://llm:80/generate
+    restart: on-failure
+    volumes:
+      - ./backend:/app
+    networks:
+      - sc_network
+
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "8000:80"
+  #   volumes:
+  #     - ./models:/models
+  #   networks:
+  #     - sc_network
+
+volumes:
+  postgres_data:
+
+networks:
+  sc_network:
+    driver: bridge

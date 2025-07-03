@@ -1,0 +1,16 @@
+[
+  {
+    "item_id": "A100",
+    "name": "Widget",
+    "quantity": 150,
+    "location": "Warehouse 1",
+    "status": "Available"
+  },
+  {
+    "item_id": "B200",
+    "name": "Gadget",
+    "quantity": 20,
+    "location": "Warehouse 2",
+    "status": "Low Stock"
+  }
+]

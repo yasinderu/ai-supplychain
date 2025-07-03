@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Widget",
+        "description": "A widget",
+        "sku": "WG-01"
+    },
+    {
+        "name": "Office Table",
+        "description": "An Office Table",
+        "sku": "OT-01"
+    },
+    {
+        "name": "Table Clock",
+        "description": "A table clock",
+        "sku": "TC-01"
+    },
+    {
+        "name": "Headset",
+        "description": "A Headset",
+        "sku": "HH-01"
+    },
+    {
+        "name": "Aluminium Plate",
+        "description": "Aan aluminium plate",
+        "sku": "ALP-01"
+    }
+]

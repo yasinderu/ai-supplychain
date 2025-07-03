@@ -1,0 +1,26 @@
+[
+    {
+        "item_id": "94e5bd7e-5c2d-4349-b53d-c1f81f50d4b8",
+        "location_id": "00258560-efbd-466f-a29b-2f38c46e3709",
+        "quantity": 100,
+        "status": "in_stock"
+    },
+    {
+        "item_id": "a0be0e2b-0919-4266-a799-7b041aff1853",
+        "location_id": "49fcce11-f01e-4701-853a-43f4746bf57d",
+        "quantity": 20,
+        "status": "in_stock"
+    },
+    {
+        "item_id": "bc6f379f-b660-401b-b1e7-1a33e727876c",
+        "location_id": "74e6a228-c0e8-4068-bf47-a19e54d00e43",
+        "quantity": 200,
+        "status": "in_stock"
+    },
+    {
+        "item_id": "e9c8000f-6968-4a37-a18a-0fb9d7d29e9d",
+        "location_id": "00258560-efbd-466f-a29b-2f38c46e3709",
+        "quantity": 89,
+        "status": "in_stock"
+    }
+]

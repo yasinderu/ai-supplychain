@@ -1,0 +1,30 @@
+[
+    {
+        "sku": "OT-01",
+        "item_name": "Office Table",
+        "location": "Central Warehouse",
+        "quantity": 100,
+        "status": "in_stock"
+    },
+    {
+        "sku": "TC-01",
+        "item_name": "Table Clock",
+        "location": "Central Warehouse",
+        "quantity": 20,
+        "status": "in_stock"
+    },
+    {
+        "sku": "WG-01",
+        "item_name": "Widget",
+        "location": "Showroom - East",
+        "quantity": 200,
+        "status": "in_stock"
+    },
+    {
+        "name": "Headset",
+        "item_name": "Headset",
+        "location": "Distribution Center - North",
+        "quantity": 89,
+        "status": "in_stock"
+    }
+]

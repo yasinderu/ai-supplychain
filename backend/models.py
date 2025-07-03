@@ -19,7 +19,7 @@ class Item(Base):
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
     inventories = relationship("Inventory", back_populates="item")
-    transactions = relationship("Transactions", back_populates="item")
+    transactions = relationship("Transaction", back_populates="item")
 
 class Location(Base):
     __tablename__ = "locations"
@@ -34,7 +34,7 @@ class Location(Base):
         "Transaction", back_populates="from_location", foreign_keys="Transaction.from_location_id"
     )
     transactions_to = relationship(
-        "Transaction", back_populates="to_location", foreign_keys="Transaction.to.location_id"
+        "Transaction", back_populates="to_location", foreign_keys="Transaction.to_location_id"
     )
 
 class Inventory(Base):
@@ -66,5 +66,5 @@ class Transaction(Base):
         "Location", foreign_keys=[from_location_id], back_populates="transactions_from"
     )
     to_location = relationship(
-        "Location", foreign_keys=[to_location_id], back_populates="transaction_to"
+        "Location", foreign_keys=[to_location_id], back_populates="transactions_to"
     )

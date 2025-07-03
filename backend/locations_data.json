@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Central Warehouse",
+    "address": "101 Industrial Zone, Cityville, 12345"
+  },
+  {
+    "name": "Retail Store A - Downtown",
+    "address": "45 Main Street, Downtown, 67890"
+  },
+  {
+    "name": "Distribution Center - North",
+    "address": "789 Logistics Park, Northville, 98765"
+  },
+  {
+    "name": "Returns Processing Hub",
+    "address": "22 Back Alley, Outskirts, 54321"
+  },
+  {
+    "name": "Showroom - East",
+    "address": "123 Elm Street, Eastside, 11223"
+  }
+]

@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = 'postgresql://supplychain:password@postgres:5432/supplychain_db'
+SQLALCHEMY_DATABASE_URL = 'postgresql://supplychain:password@host.docker.internal:5432/supplychain_db'
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

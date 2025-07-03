@@ -16,12 +16,30 @@ services:
   llm:
     image: ghcr.io/huggingface/text-generation-inference:latest
     environment:
-      - MODEL_ID=mistralai/Mistral-7B-Instruct-v0.2
+      - MODEL_ID=google/flan-t5-base
       - HUGGING_FACE_HUB_TOKEN=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
+      - NUM_SHARD=1
+      - MAX_BATCH_PREFILL_TOKENS=12000
+      - MAX_INPUT_LENGTH=1024
     ports:
       - "8080:80"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all # Use all available GPUs
+              capabilities: [gpu]
     networks:
       - sc_network
+  # chroma:
+  #   image: chromadb/chroma
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - chroma_data:/chroma
+  #   networks:
+  #     - sc_network
 
   backend:
     build: ./backend
@@ -29,6 +47,8 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+    # command: >
+    #   sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"
     environment:
       - DATABASE_URL=postgresql://supplychain:password@postgres:5432/supplychain_db
       - TGI_URL=http://llm:80/generate
@@ -49,6 +69,7 @@ services:
 
 volumes:
   postgres_data:
+  # chroma_data:
 
 networks:
   sc_network:

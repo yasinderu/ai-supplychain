@@ -35,7 +35,7 @@ async def ask(request: schemas.QuestionRequest):
 
   results = collection.query(
     query_embeddings=[question_embedding],
-    n_results=2
+    n_results=1
   )
 
   retrieved_context = results["documents"][0]
@@ -80,7 +80,15 @@ async def get_inventory_detail(inventory_id: UUID, db: Session=Depends(get_db)):
 
 @app.post("/inventory", summary="Create inventory record (add item to inventory)", status_code=status.HTTP_201_CREATED, response_model=schemas.Inventory)
 async def create_inventory_record(inventory: schemas.InventoryCreate, db:Session=Depends(get_db)):
-   return repositories.create_intventory(db=db, inventory=inventory)
+   return repositories.create_inventory(db=db, inventory=inventory)
+
+@app.patch("/inventory/{inventory_id}", summary="Partial update inventory record", status_code=status.HTTP_200_OK, response_model=schemas.Inventory)
+async def partial_update_inventory(inventory_id: UUID, update_inventory: schemas.InventoryUpdate, db: Session=Depends(get_db)):
+   updated_inventory = repositories.update_inventory(inventory_id=inventory_id, update_inventory=update_inventory, db=db)
+   if updated_inventory is not None:
+      return updated_inventory
+   else:
+      raise HTTPException(status_code=400, detail="Inventory not found")
 
 @app.get("/location", summary="List all location", status_code=status.HTTP_200_OK, response_model=list[schemas.Location])
 async def get_locations(db: Session=Depends(get_db)):

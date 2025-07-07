@@ -42,27 +42,49 @@ def get_inventory(db: Session, inventory_id: UUID):
     """Retrieve inventory detail from database"""
     return db.query(models.Inventory).filter(models.Inventory.id == inventory_id).first()
 
-def create_intventory(db: Session, inventory:schemas.InventoryCreate):
+def create_inventory(db: Session, inventory:schemas.InventoryCreate):
     """Create or add inventory record to database."""
-    try:
-        db_inventory = models.Inventory(
+    db_inventory = models.Inventory(
         item_id=inventory.item_id,
         location_id=inventory.location_id,
         quantity=inventory.quantity,
         status=inventory.status,
         )
 
-        db.add(db_inventory)
+    db.add(db_inventory)
+    db.commit()
+    db.refresh(db_inventory)
         
-        inventory_vector = {"id": str(db_inventory.id), "quantity": inventory.quantity, "status": inventory.status, "item_name": inventory.item_name, "location_name": inventory.location_name}
+        
+    inventory_vector = {"id": str(db_inventory.id), "quantity": inventory.quantity, "status": inventory.status, "item_name": inventory.item_name, "location_name": inventory.location_name}
 
-        data_vector.index_inventory_record(inventory=inventory_vector)
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-    finally:
+    data_vector.index_inventory_record(inventory=inventory_vector)
+    return db_inventory
+        
+
+def update_inventory(db: Session, update_inventory: schemas.InventoryUpdate, inventory_id: UUID):
+    inventory = get_inventory(db=db, inventory_id=inventory_id)
+    if inventory is not None:
+        inventory.quantity = update_inventory.quantity if update_inventory.quantity != None else inventory.quantity
+        inventory.status = update_inventory.status if update_inventory.status != None else inventory.status
+            
+        db.add(inventory)
+
+        inventory_vector = {
+            "item_name": inventory.item.name,
+            "location_name": inventory.location.name,
+            "quantity": inventory.quantity,
+            "status": inventory.status,
+            "id": str(inventory.id)
+        }
         db.commit()
-        db.refresh(db_inventory)
-        return db_inventory
+        db.refresh(inventory)
+
+        data_vector.update_inventory_record(inventory=inventory_vector)
+        return inventory
+    else:
+        return None
+        
     
 ## Repositories for location
 def get_locations(db: Session, skip:int=0, limit: int=100):
@@ -94,3 +116,19 @@ def get_transactions(db: Session, skip: int=0, limit: int=100):
 def get_transaction_detail(db:Session, transaction_id: UUID):
     """Retrieve transaction detail from database"""
     return db.query(models.Transaction).filter(models.Transaction.id == transaction_id).first()
+
+def create_transaction(db: Session, transaction: schemas.TransactionCreate):
+    """Create transaction record to database"""
+    db_transaction = models.Transaction(
+        item_id=transaction.item_id,
+        from_location_id=transaction.from_transaction_id,
+        to_location_id=transaction.to_location_id,
+        quantity=transaction.quantity,
+        notes=transaction.notes
+    )
+
+    db.add(db_transaction)
+    db.commit()
+    db.refresh(db_transaction)
+
+    return db_transaction

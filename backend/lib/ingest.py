@@ -3,12 +3,12 @@ import chromadb
 from sentence_transformers import SentenceTransformer
 import os
 
-# CHROMA_DB_PATH = "./chroma_data"
+CHROMA_DB_PATH = "./chroma_data"
 
-# os.makedirs(CHROMA_DB_PATH, exist_ok=True)
+os.makedirs(CHROMA_DB_PATH, exist_ok=True)
 
 # initialize Chroma
-client = chromadb.Client()
+client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
 collection = client.create_collection(name="inventory_data")
 
 # load embeddings model

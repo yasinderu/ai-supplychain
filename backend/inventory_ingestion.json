@@ -9,7 +9,7 @@
     {
         "sku": "TC-01",
         "item_name": "Table Clock",
-        "location": "Central Warehouse",
+        "location": "Retail Store A - Downtown",
         "quantity": 20,
         "status": "in_stock"
     },
@@ -23,7 +23,7 @@
     {
         "name": "Headset",
         "item_name": "Headset",
-        "location": "Distribution Center - North",
+        "location": "Central Warehouse",
         "quantity": 89,
         "status": "in_stock"
     }

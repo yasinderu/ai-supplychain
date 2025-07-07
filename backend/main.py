@@ -1,12 +1,14 @@
-# from database import Base
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
-# from sqlalchemy import create_engine
 from pydantic import BaseModel
 import chromadb
 import requests
 from sentence_transformers import SentenceTransformer
-import json
+from sqlalchemy.orm import Session
+from database import get_db
+from uuid import UUID
+
+import schemas, repositories
 
 app = FastAPI()
 
@@ -20,44 +22,13 @@ app.add_middleware(
 
 TGI_URL = "http://llm:80/generate"
 
-client = chromadb.Client()
-collection = client.create_collection(name="inventory_data")
-
-# load embeddings model
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
-
-# load your data
-with open("inventory_ingestion.json", "r") as f:
-    data = json.load(f)
-
-print("data", data)
-
-# store in Chroma
-for item in data:
-    text = (
-        f"Item {item['item_name']} is located at "
-        f"{item['location']} with quantity {item['quantity']} "
-        f"and status {item['status']}."
-    )
-    embedding = embedder.encode(text).tolist()
-    collection.add(
-        documents=[text],
-        embeddings=[embedding],
-        ids=[item["item_name"]],
-    )
-
-collection.count()
-
-print("✅ Data indexed in ChromaDB.")
-# collection = client.get_collection(name="inventory_data")
+client = chromadb.PersistentClient("./chroma_data")
+collection = client.get_collection(name="inventory_data")
 
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
-class QuestionRequest(BaseModel):
-  question: str
-
-@app.post("/ask")
-async def ask(request: QuestionRequest):
+@app.post("/ask", summary="AI Assistant to answer user's questions")
+async def ask(request: schemas.QuestionRequest):
   question_embedding = embedder.encode(request.question).tolist()
 
   print(collection.count())
@@ -70,7 +41,7 @@ async def ask(request: QuestionRequest):
   retrieved_context = results["documents"][0]
 
   context = "\n".join(retrieved_context)
-  prompt = f"Use the following supply data to answer:\n{context}\nQuestion: {request.question}"
+  prompt = f"Use the following inventory data to answer:\n{context}\nQuestion: {request.question}"
 
   payload = {"inputs": prompt}
   try:
@@ -86,3 +57,47 @@ async def ask(request: QuestionRequest):
 @app.get("/health")
 def health():
   return {"status": "OK"}
+
+@app.get("/item", summary="List all items", status_code=status.HTTP_200_OK, response_model=list[schemas.Item])
+async def get_items(db:Session=Depends(get_db)):
+   return repositories.get_items(db)
+
+@app.get("/item/{item_id}", summary="Get item detail", status_code=status.HTTP_200_OK, response_model=schemas.Item)
+async def get_item_detail(item_id: UUID, db:Session=Depends(get_db)):
+   return repositories.get_item(db, item_id)
+
+@app.post("/item", summary="Create a new item", status_code=status.HTTP_201_CREATED, response_model=schemas.Item)
+async def create_item(item: schemas.ItemCreate, db:Session=Depends(get_db)):
+   return repositories.create_item(db, item)
+
+@app.get("/inventory", summary="List all inventory details (e.g item name, item location, item quantity)", status_code=status.HTTP_200_OK, response_model=list[schemas.Inventory])
+async def get_inventory(db: Session=Depends(get_db)):
+   return repositories.get_inventories(db)
+
+@app.get("/inventory/{inventory_id}", summary="Get inventory detail", status_code=status.HTTP_200_OK, response_model=schemas.Inventory)
+async def get_inventory_detail(inventory_id: UUID, db: Session=Depends(get_db)):
+   return repositories.get_inventory(db, inventory_id)
+
+@app.post("/inventory", summary="Create inventory record (add item to inventory)", status_code=status.HTTP_201_CREATED, response_model=schemas.Inventory)
+async def create_inventory_record(inventory: schemas.InventoryCreate, db:Session=Depends(get_db)):
+   return repositories.create_intventory(db=db, inventory=inventory)
+
+@app.get("/location", summary="List all location", status_code=status.HTTP_200_OK, response_model=list[schemas.Location])
+async def get_locations(db: Session=Depends(get_db)):
+   return repositories.get_locations(db=db)
+
+@app.get("/location/{location_id}", summary="Get location details", status_code=status.HTTP_200_OK, response_model=schemas.Location)
+async def get_location_details(location_id: UUID, db: Session=Depends(get_db)):
+   return repositories.get_location_detail(db=db, location_id=location_id)
+
+@app.post("/location", summary="Create or add location data", status_code=status.HTTP_201_CREATED, response_model=schemas.Location)
+async def create_location(location: schemas.LocationCreate, db: Session=Depends(get_db)):
+   return repositories.create_location(db=db, location=location)
+
+@app.get("/transaction", summary="Get list all transaction records", status_code=status.HTTP_200_OK, response_model=list[schemas.Transaction])
+async def get_transactions(db: Session=Depends(get_db)):
+   return repositories.get_transactions(db=db)
+
+@app.get("/transaction/{transaction_id}", summary="Get transaction details", status_code=status.HTTP_200_OK, response_model=schemas.Transaction)
+async def get_transaction_detail(transaction_id: UUID, db: Session=Depends(get_db)):
+   return repositories.get_transaction_detail(db=db, transaction_id=transaction_id)

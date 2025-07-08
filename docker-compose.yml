@@ -16,11 +16,12 @@ services:
   llm:
     image: ghcr.io/huggingface/text-generation-inference:latest
     environment:
-      - MODEL_ID=google/flan-t5-base
-      - HUGGING_FACE_HUB_TOKEN=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
-      - NUM_SHARD=1
-      - MAX_BATCH_PREFILL_TOKENS=12000
-      - MAX_INPUT_LENGTH=1024
+      - MODEL_ID=/models/flan-t5-base
+      - DEVICE=gpu
+      # - HUGGING_FACE_HUB_TOKEN=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
+      # - NUM_SHARD=1
+      # - MAX_BATCH_PREFILL_TOKENS=12000
+      # - MAX_INPUT_LENGTH=1024
     ports:
       - "8080:80"
     deploy:
@@ -30,16 +31,10 @@ services:
             - driver: nvidia
               count: all # Use all available GPUs
               capabilities: [gpu]
+    volumes:
+      - ./models:/models
     networks:
       - sc_network
-  # chroma:
-  #   image: chromadb/chroma
-  #   ports:
-  #     - "8000:8000"
-  #   volumes:
-  #     - chroma_data:/chroma
-  #   networks:
-  #     - sc_network
 
   backend:
     build: ./backend
@@ -52,11 +47,29 @@ services:
     environment:
       - DATABASE_URL=postgresql://supplychain:password@postgres:5432/supplychain_db
       - TGI_URL=http://llm:80/generate
+      - LOCAL_SENTENCE_VARIABLE_MODEL_DIR=/models/sentence-transformers/all-MiniLM-L6-v2
     restart: on-failure
     volumes:
       - ./backend:/app
+      - ./models:/models
     networks:
       - sc_network
+  
+  # sentence_embedding_service:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     # Mount the local model directory into the container.
+  #     # The left side (./models/sentence-transformers/all-MiniLM-L6-v2)
+  #     # is the path on your host machine.
+  #     # The right side (/app/models/sentence-transformers/all-MiniLM-L6-v2)
+  #     # is the path inside the container.
+  #     - ./models/sentence-transformers/all-MiniLM-L6-v2:/app/models/sentence-transformers/all-MiniLM-L6-v2
+  #   environment:
+  #     # Optional: Explicitly tell Hugging Face libraries to run offline
+  #     - HF_HUB_OFFLINE=1
+  #     - TRANSFORMERS_OFFLINE=1
 
   # frontend:
   #   build: ./frontend

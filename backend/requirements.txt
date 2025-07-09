@@ -6,3 +6,7 @@ chromadb
 sentence-transformers
 torch
 alembic
+python-jose[cryptography]
+passlib
+python-multipart
+bcrypt

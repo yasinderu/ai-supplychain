@@ -5,19 +5,21 @@ from uuid import UUID
 import models, schemas
 
 from lib import data_vector
+import auth
 
 
 ## Repositories for user
-def get_user(db: Session, user_id: UUID):
+def get_user(db: Session, username: str):
     """Retrieve user data from database"""
-    return db.query(models.User).filter(models.User.id == user_id).first()
+    return db.query(models.User).filter(models.User.username == username).first()
 
 
 def create_user(db: Session, user: schemas.UserCreate):
     """Create or add user data to database"""
+    hashed_password = auth.get_password_hash(user.password)
     db_user = models.User(
         username=user.username,
-        password=user.password,
+        password=hashed_password,
         fullname=user.fullname,
     )
 

@@ -4,19 +4,24 @@ from uuid import UUID
 from typing import Optional
 
 
+## Auth schema
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
 # User schema
 class UserBase(BaseModel):
     """Base schema for user data"""
 
     username: str
-    password: str
-    fullnane: str
 
 
 class UserCreate(UserBase):
     """Schema for creating new user data"""
 
     fullname: Optional[str] = None
+    password: str
 
 
 class User(UserBase):

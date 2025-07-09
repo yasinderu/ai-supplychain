@@ -2,3 +2,8 @@ __pycache__
 venv/
 flan-t5-base
 sentence-transformers
+
+node_modules
+.next
+
+.env

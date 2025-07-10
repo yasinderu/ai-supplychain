@@ -1,12 +1,17 @@
-"use server"
+"use server";
 
 import axios from "axios";
+import { cookies } from "next/headers";
 
-const apiBaseUrl = process.env.API_ENDPOINT
+const apiBaseUrl = process.env.API_ENDPOINT;
 
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrZW5ueTEyMyIsImV4cCI6MTc1MjA3MDUyNn0.lTDrbHmL8wwSf9WlErSgbXZ61FT4ow_R0VDgV7WDd1E"
+const cookiesStore = await cookies();
+
+const token = cookiesStore.get("session-token")?.value;
+
+console.log(token);
 
 export const instance = axios.create({
   baseURL: apiBaseUrl,
-  headers: {"Authorization": `Bearer ${token}`}
-})
+  headers: { Authorization: `Bearer ${token}` },
+});

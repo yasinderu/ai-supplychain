@@ -9,8 +9,9 @@ import auth
 
 
 ## Repositories for user
-def get_user(db: Session, username: str):
+def get_user(db: Session, user: schemas.UserBase):
     """Retrieve user data from database"""
+    username = user.username
     return db.query(models.User).filter(models.User.username == username).first()
 
 

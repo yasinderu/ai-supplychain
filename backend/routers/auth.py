@@ -21,7 +21,7 @@ async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Session = Depends(get_db),
 ):
-    user = get_user(db=db, username=form_data.username)
+    user = get_user(db=db, user=form_data)
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -33,7 +33,7 @@ async def login(
 
 
 @auth_router.get("/user/me", summary="Get current user", response_model=UserBase)
-async def get_current_user(
+async def get_authenticated_user(
     current_user: UserBase = Depends(get_current_user),
 ):
     return current_user

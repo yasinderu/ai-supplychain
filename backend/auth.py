@@ -8,7 +8,7 @@ from typing import Optional
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = "MY_SECRET_KEY"
+SECRET_KEY = "83922956d7d376d40d7a7167f390e298"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 

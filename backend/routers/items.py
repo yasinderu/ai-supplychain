@@ -36,5 +36,5 @@ async def get_item_detail(item_id: UUID, db: Session = Depends(get_db)):
     status_code=status.HTTP_201_CREATED,
     response_model=Item,
 )
-async def create_item(item: ItemCreate, db: Session = Depends(get_db)):
+async def create_new_item(item: ItemCreate, db: Session = Depends(get_db)):
     return create_item(db, item)

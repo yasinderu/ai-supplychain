@@ -1,21 +1,36 @@
-"use server"
+"use server";
 
-import { instance as axios } from "./axios.config"
+import { instance as axios } from "./axios.config";
+
+interface WarehouseCreate {
+  name: string;
+  address: string;
+}
 
 export const getWarehouseList = async () => {
   try {
-    const response = await axios.get("/locations")
+    const response = await axios.get("/locations");
 
     const warehouseData = response.data.map((warehouse: any) => {
       return {
         id: warehouse.id,
         name: warehouse.name,
-        address: warehouse.address
-      }
-    })
-    
-    return warehouseData
+        address: warehouse.address,
+      };
+    });
+
+    return warehouseData;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
+
+export const addWarehouse = async (payload: WarehouseCreate) => {
+  try {
+    const response = await axios.post("/locations", payload);
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

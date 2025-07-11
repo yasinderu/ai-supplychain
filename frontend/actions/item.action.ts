@@ -1,23 +1,41 @@
-"use server"
+"use server";
 
-import { instance as axios } from "./axios.config"
+import { instance as axios } from "./axios.config";
+
+interface ItemCreate {
+  name: string;
+  description?: string;
+  sku: string;
+  category?: string;
+}
 
 export const getItemList = async () => {
   try {
-    const response = await axios.get("/items")
-    
+    const response = await axios.get("/items");
+
     const data = response.data.map((item: any) => {
       return {
         id: item.id,
         name: item.name,
         description: item.description,
         sku: item.sku,
-        category: item.category
-      }
-    })
+        category: item.category,
+      };
+    });
 
-    return data
+    return data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
+
+export const addItem = async (item: ItemCreate) => {
+  try {
+    const response = await axios.post("/items", item);
+
+    const data = response.data;
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -10,7 +10,7 @@ export default function dashboardLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarTrigger />
-      <main className="container mx-auto">{children}</main>
+      <main className="container mx-auto mt-10">{children}</main>
     </SidebarProvider>
   );
 }

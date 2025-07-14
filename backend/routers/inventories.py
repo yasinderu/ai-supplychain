@@ -5,6 +5,7 @@ from repositories import (
     get_inventory,
     create_inventory,
     update_inventory,
+    delete_inventory
 )
 from sqlalchemy.orm import Session
 from database import get_db
@@ -66,3 +67,11 @@ async def partial_update_inventory(
         return updated_inventory
     else:
         raise HTTPException(status_code=400, detail="Inventory not found")
+    
+@inventory_router.delete("/{inventory_id}", summary="Delete inventory record", status_code=status.HTTP_200_OK)
+async def delete_inventory_record( inventory_id: UUID, db: Session=Depends(get_db)):
+    deleted_inventory = delete_inventory(db=db, inventory_id=inventory_id)
+
+    if deleted_inventory is None:
+        raise HTTPException(status_code=404, detail="Inventory not found")
+    return {"message": "Sucess"}

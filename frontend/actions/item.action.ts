@@ -29,6 +29,16 @@ export const getItemList = async () => {
   }
 };
 
+export const getItemDetail = async (itemId: string) => {
+  try {
+    const res = await axios.get(`/items/${itemId}`);
+
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const addItem = async (item: ItemCreate) => {
   try {
     const response = await axios.post("/items", item);

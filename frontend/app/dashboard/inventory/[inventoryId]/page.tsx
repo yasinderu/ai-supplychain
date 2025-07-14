@@ -1,7 +1,24 @@
-import React from "react";
+import { getInventoryDetail } from "@/actions/inventory.action";
+import { getItemList } from "@/actions/item.action";
+import { getWarehouseList } from "@/actions/warehouse.action";
+import CustomCard from "@/components/CustomCard";
+import EditInventory from "@/components/inventory/EditInventory";
 
-const InventoryDetails = () => {
-  return <div>InventoryDetails</div>;
+const InventoryDetails = async ({ params }: SearchParamsProps) => {
+  const { inventoryId } = await params;
+  const inventoryDetails = await getInventoryDetail(inventoryId);
+  const items = await getItemList();
+  const warehouses = await getWarehouseList();
+
+  return (
+    <div className="flex items-center justify-center">
+      <EditInventory
+        items={items}
+        warehouses={warehouses}
+        inventory={inventoryDetails}
+      />
+    </div>
+  );
 };
 
 export default InventoryDetails;

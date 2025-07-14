@@ -41,8 +41,10 @@ async def ask(request: schemas.QuestionRequest, user=Security(auth.get_current_u
 
     retrieved_context = results["documents"][0]
 
+    print(collection.count())
+
     context = "\n".join(retrieved_context)
-    prompt = f"Use the following inventory data to answer:\n{context}\nQuestion: {request.question}"
+    prompt = f"You're name is Kenny, you are an AI Assistant for inventory management system. Use the following inventory data to answer:\n{context}\nQuestion: {request.question}"
 
     payload = {"inputs": prompt}
     try:

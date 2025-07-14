@@ -3,10 +3,10 @@
 import { instance as axios } from "./axios.config";
 
 interface InventoryCreate {
-  itemId: string;
-  locationId: string;
+  item_id: string;
+  location_id: string;
   quantity: number;
-  status: string;
+  status: "in_stock" | "defect" | "transfered";
 }
 
 export const getInventoryList = async () => {
@@ -43,6 +43,16 @@ export const addInventory = async (payload: InventoryCreate) => {
     const response = await axios.post("/inventories", payload);
 
     return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getInventoryDetail = async (inventoryId: string) => {
+  try {
+    const res = await axios.get(`/inventories/${inventoryId}`);
+
+    return res.data;
   } catch (error) {
     console.log(error);
   }

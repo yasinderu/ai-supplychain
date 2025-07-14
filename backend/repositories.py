@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from datetime import datetime
 from uuid import UUID
 
 import models, schemas
@@ -62,6 +61,18 @@ def create_item(db: Session, item: schemas.ItemCreate):
 
     return db_item
 
+def delete_item_data(db: Session, item_id: UUID):
+    """Delete item from database"""
+    db_item = get_item(item_id=item_id, db=db)
+
+    if db_item is None:
+        return None
+    
+    db.delete(db_item)
+    db.commit()
+
+    return db_item
+
 
 ## Repositories for inventory
 def get_inventories(db: Session, skip: int = 0, limit: int = 100):
@@ -93,11 +104,25 @@ def create_inventory(db: Session, inventory: schemas.InventoryCreate):
         "id": str(db_inventory.id),
         "quantity": inventory.quantity,
         "status": inventory.status,
-        "item_name": inventory.item_name,
-        "location_name": inventory.location_name,
+        "item_name": db_inventory.item.name,
+        "location_name": db_inventory.location.name,
     }
 
     data_vector.index_inventory_record(inventory=inventory_vector)
+    return db_inventory
+
+def delete_inventory(db: Session, inventory_id: UUID):
+    """Delete inventory record from database"""
+    db_inventory = get_inventory(db=db, inventory_id=inventory_id)
+
+    if db_inventory is None:
+        return None
+    
+    db.delete(db_inventory)
+    db.commit()
+
+    data_vector.delete_data(str(inventory_id))
+
     return db_inventory
 
 
@@ -156,6 +181,18 @@ def create_location(db: Session, location: schemas.LocationCreate):
     db.add(db_location)
     db.commit()
     db.refresh(db_location)
+
+    return db_location
+
+def delete_location(db: Session, location_id: UUID):
+    """Delete location or warehouse from database"""
+    db_location = get_location_detail(db=db, location_id=location_id)
+
+    if db_location is None:
+        return None
+    
+    db.delete(db_location)
+    db.commit()
 
     return db_location
 

@@ -25,6 +25,16 @@ export const getWarehouseList = async () => {
   }
 };
 
+export const getWarehouseDetail = async (warehouseId: string) => {
+  try {
+    const res = await axios.get(`/locations/${warehouseId}`);
+
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const addWarehouse = async (payload: WarehouseCreate) => {
   try {
     const response = await axios.post("/locations", payload);

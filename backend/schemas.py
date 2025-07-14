@@ -99,8 +99,8 @@ class InventoryBase(BaseModel):
 class InventoryCreate(InventoryBase):
     """Schema for creating new inventiory record."""
 
-    item_name: str
-    location_name: str
+    # item_name: str
+    # location_name: str
 
 
 class InventoryUpdate(InventoryBase):

@@ -3,6 +3,7 @@ import chromadb
 from chromadb.config import Settings
 import schemas
 import os
+from uuid import UUID
 
 sentence_embedding = os.environ["LOCAL_SENTENCE_VARIABLE_MODEL_DIR"]
 
@@ -52,4 +53,10 @@ def index_transaction_record(transaction):
     embedding = embedder.encode(prompt).tolist()
     collection.add(
         documents=[prompt], embeddings=[embedding], ids=[str(transaction.id)]
+    )
+
+def delete_data(id: str):
+    """To delete data vector by id"""
+    collection.delete(
+        ids=[id]
     )

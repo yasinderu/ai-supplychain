@@ -57,3 +57,13 @@ export const getInventoryDetail = async (inventoryId: string) => {
     console.log(error);
   }
 };
+
+export const deleteInventory = async (inventoryId: string) => {
+  try {
+    const res = await axios.delete(`/inventories/${inventoryId}`);
+
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

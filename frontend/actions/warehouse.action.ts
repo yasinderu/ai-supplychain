@@ -44,3 +44,13 @@ export const addWarehouse = async (payload: WarehouseCreate) => {
     console.log(error);
   }
 };
+
+export const deleteWarehouse = async (warehouseId: string) => {
+  try {
+    const res = await axios.delete(`/locations/${warehouseId}`);
+
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

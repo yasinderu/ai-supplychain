@@ -49,3 +49,13 @@ export const addItem = async (item: ItemCreate) => {
     console.log(error);
   }
 };
+
+export const deleteItem = async (itemId: string) => {
+  try {
+    const res = await axios.delete(`/items/${itemId}`);
+
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

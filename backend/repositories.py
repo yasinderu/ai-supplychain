@@ -227,3 +227,22 @@ def create_transaction(db: Session, transaction: schemas.TransactionCreate):
     db.refresh(db_transaction)
 
     return db_transaction
+
+## Repositories for chat
+def get_chats(db: Session, user_id: UUID, skip: int = 0, limit: int = 100):
+    """Retrieve user's chat history"""
+    return db.query(models.Chat).filter(models.Chat.user_id == user_id).offset(skip).limit(limit)
+
+def create_chat(db: Session, chat: schemas.ChatCreate):
+    """Create new user's chat"""
+    db_chat = models.Chat(
+        user_id=chat.user_id,
+        text=chat.text,
+        sender=chat.sender
+    )
+
+    db.add(db_chat)
+    db.commit()
+    db.refresh(db_chat)
+
+    return db_chat

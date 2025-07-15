@@ -2,42 +2,49 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Minimize2, Maximize2 } from "lucide-react";
+import { askQuestion } from "@/actions/ai.action";
+import { saveMessageToAIChat } from "@/actions/ai.action";
 
 interface Message {
   id: number;
   text: string;
   sender: "user" | "bot";
-  timestamp: Date;
 }
 
-interface FloatingChatUIProps {
+interface AIChatUIProps {
   onSendMessage?: (message: string) => void;
-  initialMessages?: Message[];
+  initialMessages: Message[];
   isOnline?: boolean;
   supportTitle?: string;
   className?: string;
+  userId: string;
 }
 
-const FloatingChatUI: React.FC<FloatingChatUIProps> = ({
+const AIChatUI: React.FC<AIChatUIProps> = ({
   onSendMessage,
-  initialMessages = [
-    {
-      id: 1,
-      text: "Hello, I'm Kenny your AI Assistant! How can I help you today?",
-      sender: "bot",
-      timestamp: new Date(),
-    },
-  ],
+  initialMessages,
+  userId,
   isOnline = true,
   supportTitle = "Chat Support",
   className = "",
 }) => {
+  const firstMessage: Message[] = [
+    {
+      id: 1,
+      text: "Hello, I'm Kenny your AI Assistant! How can I help you today?",
+      sender: "bot",
+    },
+  ];
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>(firstMessage);
   const [inputText, setInputText] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMessages((prevMessages) => prevMessages.concat(initialMessages));
+  }, []);
 
   const scrollToBottom = (): void => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -47,35 +54,58 @@ const FloatingChatUI: React.FC<FloatingChatUIProps> = ({
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = (): void => {
+  const handleSendMessage = async (): Promise<void> => {
     if (inputText.trim()) {
-      const newMessage: Message = {
-        id: messages.length + 1,
-        text: inputText,
+      const userMsgPayload = {
+        user_id: userId,
         sender: "user",
-        timestamp: new Date(),
+        text: inputText,
       };
+      const savedMessage = await saveMessageToAIChat(userMsgPayload);
 
-      setMessages((prev) => [...prev, newMessage]);
-      setInputText("");
+      if (savedMessage) {
+        const newMessage: Message = {
+          id: savedMessage.id,
+          text: inputText,
+          sender: "user",
+          // timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, newMessage]);
+        setInputText("");
+      }
 
-      // Call external handler if provided
       if (onSendMessage) {
         onSendMessage(inputText);
       } else {
-        // Default demo behavior
-        setIsTyping(true);
+        const payload = {
+          question: inputText,
+        };
+        try {
+          setIsTyping(true);
+          const data = await askQuestion(payload);
 
-        setTimeout(() => {
-          const botResponse: Message = {
-            id: messages.length + 2,
-            text: "Thanks for your message! This is a demo response.",
+          const botMsgPayload = {
             sender: "bot",
-            timestamp: new Date(),
+            user_id: userId,
+            text: data.answer,
           };
-          setMessages((prev) => [...prev, botResponse]);
+
+          const message = await saveMessageToAIChat(botMsgPayload);
+
+          if (data) {
+            setIsTyping(false);
+            const newMessage: Message = {
+              id: message.id,
+              text: data.answer,
+              sender: "bot",
+              // timestamp: new Date(),
+            };
+            setMessages((prev) => [...prev, newMessage]);
+          }
+        } catch (error) {
+          console.log(error);
           setIsTyping(false);
-        }, 1500);
+        }
       }
     }
   };
@@ -131,8 +161,7 @@ const FloatingChatUI: React.FC<FloatingChatUIProps> = ({
           isMinimized ? "h-14 w-80" : "h-96 w-80"
         }`}
       >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-t-lg flex items-center justify-between">
+        <div className="bg-gradient-to-r from-gray-800 to-slate-600 text-white p-4 rounded-t-lg flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
               <MessageCircle size={16} />
@@ -171,7 +200,6 @@ const FloatingChatUI: React.FC<FloatingChatUIProps> = ({
 
         {!isMinimized && (
           <>
-            {/* Messages */}
             <div className="h-64 overflow-y-auto p-4 space-y-4 bg-gray-50">
               {messages.map((message: Message) => (
                 <div
@@ -183,7 +211,7 @@ const FloatingChatUI: React.FC<FloatingChatUIProps> = ({
                   <div
                     className={`max-w-xs px-4 py-2 rounded-lg ${
                       message.sender === "user"
-                        ? "bg-blue-600 text-white rounded-br-none"
+                        ? "bg-gray-600 text-white rounded-br-none"
                         : "bg-white text-gray-800 rounded-bl-none shadow-sm border"
                     }`}
                   >
@@ -195,7 +223,7 @@ const FloatingChatUI: React.FC<FloatingChatUIProps> = ({
                           : "text-gray-500"
                       }`}
                     >
-                      {formatTime(message.timestamp)}
+                      {/* {formatTime(message.timestamp)} */}
                     </span>
                   </div>
                 </div>
@@ -222,16 +250,15 @@ const FloatingChatUI: React.FC<FloatingChatUIProps> = ({
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
             <div className="p-4 border-t bg-white rounded-b-lg">
               <div className="flex items-center space-x-2">
                 <input
                   type="text"
                   value={inputText}
                   onChange={handleInputChange}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyPress}
                   placeholder="Type your message..."
-                  className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent text-sm"
                 />
                 <button
                   onClick={handleSendMessage}
@@ -250,4 +277,4 @@ const FloatingChatUI: React.FC<FloatingChatUIProps> = ({
   );
 };
 
-export default FloatingChatUI;
+export default AIChatUI;

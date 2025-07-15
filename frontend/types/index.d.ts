@@ -1,3 +1,8 @@
+interface User {
+  username: string;
+  id: string;
+}
+
 interface Item {
   id: string;
   name: string;
@@ -28,3 +33,18 @@ declare type SearchParamsProps = {
     [key: string]: string | string[] | undefined;
   };
 };
+
+declare type AIQuestionType = {
+  question: string;
+};
+
+declare type AIAnswerType = {
+  answer: string | null;
+};
+
+interface Chat {
+  id: string;
+  text: string;
+  user: User;
+  sender: string;
+}

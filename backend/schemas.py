@@ -134,7 +134,6 @@ class TransactionBase(BaseModel):
 
 class TransactionCreate(TransactionBase):
     """Schema for creating new transaction record."""
-
     pass
 
 
@@ -146,5 +145,23 @@ class Transaction(TransactionBase):
     item: Item
     from_location: Optional[Location] = None
     to_location: Optional[Location] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+# Chat schema
+class ChatBase(BaseModel):
+    """Base schema for chat data"""
+    user_id: UUID
+    text: str
+    sender: str
+
+class ChatCreate(ChatBase):
+    """Schema for creating chat"""
+    pass
+
+class Chat(ChatBase):
+    id: UUID
+    user: Optional[User] = None
+    created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)

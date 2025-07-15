@@ -22,6 +22,8 @@ class User(Base):
         onupdate=datetime.now(timezone.utc),
     )
 
+    chats = relationship("Chat", back_populates="user")
+
 
 class Item(Base):
     __tablename__ = "items"
@@ -103,3 +105,14 @@ class Transaction(Base):
     to_location = relationship(
         "Location", foreign_keys=[to_location_id], back_populates="transactions_to"
     )
+
+class Chat(Base):
+    __tablename__ = "chats"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    text = Column(Text)
+    sender = Column(String(100), nullable=False)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+
+    user = relationship("User", back_populates="chats")

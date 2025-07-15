@@ -3,10 +3,15 @@
 import { instance as axios } from "./axios.config";
 import { stringify } from "querystring";
 import { cookies } from "next/headers";
+import { jwtDecode } from "jwt-decode";
 
 interface UserSignin {
   username: string;
   password: string;
+}
+
+interface UserFromToken {
+  user_id: string;
 }
 
 export const userSignin = async (user: UserSignin) => {
@@ -17,8 +22,10 @@ export const userSignin = async (user: UserSignin) => {
       password: user.password,
     };
     const response = await axios.post("/token", stringify(payload));
+    const userDetail: UserFromToken = jwtDecode(response.data.access_token);
 
     cookiesStore.set("session_token", response.data.access_token);
+    cookiesStore.set("user_id", userDetail.user_id);
 
     return response.data;
   } catch (error) {

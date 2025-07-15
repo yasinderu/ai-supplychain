@@ -5,7 +5,7 @@ import requests
 from sentence_transformers import SentenceTransformer
 import os
 import schemas
-from routers import auth, items, users, inventories, locations, transactions
+from routers import auth, items, users, inventories, locations, transactions, chats
 
 app = FastAPI()
 
@@ -23,6 +23,7 @@ app.include_router(router=items.item_router)
 app.include_router(router=inventories.inventory_router)
 app.include_router(router=locations.location_router)
 app.include_router(router=transactions.transaction_router)
+app.include_router(router=chats.chat_router)
 
 
 tgi_url = os.environ["TGI_URL"]

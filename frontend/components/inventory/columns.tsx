@@ -11,7 +11,9 @@ import {
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
-export const columns: ColumnDef<Inventory>[] = [
+export const getColumns = (
+  deleteInventory: (inventoryId: string) => void
+): ColumnDef<Inventory>[] => [
   {
     accessorKey: "item.name",
     header: "Item",
@@ -51,7 +53,9 @@ export const columns: ColumnDef<Inventory>[] = [
             >
               View inventory details
             </DropdownMenuItem>
-            <DropdownMenuItem>Delete inventory</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => deleteInventory(inventory.id)}>
+              Delete inventory
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

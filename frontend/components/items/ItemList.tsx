@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DataTable } from "../DataTable";
 import { getColumns } from "./columns";
+import { useItem } from "@/contexts/ItemContext";
 
 interface ItemListProps {
   items: Item[];
@@ -10,15 +11,19 @@ interface ItemListProps {
 }
 
 const ItemList = ({ items, deleteItemAction }: ItemListProps) => {
-  const [itemList, setItemList] = useState(items);
+  const { itemList, setItemList, removeItem } = useItem();
+  useEffect(() => {
+    setItemList(items);
+  }, [items]);
+
   const deleteItem = async (itemId: string) => {
     const originalData = [...itemList];
     try {
-      await deleteItemAction(itemId);
+      const res = await deleteItemAction(itemId);
 
-      setItemList((currentList) =>
-        currentList.filter((item) => item.id !== itemId)
-      );
+      // if (res) {
+      removeItem(itemId);
+      // }
     } catch (error) {
       setItemList(originalData);
       console.log(error);

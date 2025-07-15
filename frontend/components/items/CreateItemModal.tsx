@@ -1,6 +1,6 @@
 "use client";
 
-import { addItem } from "@/actions/item.action";
+import { createItem } from "@/actions/item.action";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useItem } from "@/contexts/ItemContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -36,6 +37,7 @@ const formSchema = z.object({
 
 const CreateItemModal = () => {
   const [open, setOpen] = useState(false);
+  const { addItem } = useItem();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,9 +56,10 @@ const CreateItemModal = () => {
       category: values.category,
     };
 
-    const res = await addItem(payload);
+    const res = await createItem(payload);
 
     if (res) {
+      addItem(res);
       setOpen(false);
     }
   };

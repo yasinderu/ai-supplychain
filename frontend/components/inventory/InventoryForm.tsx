@@ -56,7 +56,7 @@ const EditInventoryForm = ({
   };
 
   return (
-    <div>
+    <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-4">
@@ -175,7 +175,7 @@ const EditInventoryForm = ({
           </div>
         </form>
       </Form>
-    </div>
+    </>
   );
 };
 

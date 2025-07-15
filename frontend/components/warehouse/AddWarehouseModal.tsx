@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useWarehouse } from "@/contexts/WarehouseContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -32,6 +33,7 @@ const formSchema = z.object({
 });
 
 const AddWarehouseModal = () => {
+  const { addNewWarehouse } = useWarehouse();
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,6 +52,7 @@ const AddWarehouseModal = () => {
     const res = await addWarehouse(payload);
 
     if (res) {
+      addNewWarehouse(res);
       setOpen(false);
     }
   };

@@ -1,7 +1,6 @@
 import { getInventoryDetail } from "@/actions/inventory.action";
 import { getItemList } from "@/actions/item.action";
 import { getWarehouseList } from "@/actions/warehouse.action";
-import CustomCard from "@/components/CustomCard";
 import EditInventory from "@/components/inventory/EditInventory";
 
 const InventoryDetails = async ({ params }: SearchParamsProps) => {

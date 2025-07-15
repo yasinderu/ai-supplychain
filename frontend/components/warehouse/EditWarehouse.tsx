@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import EditWarehouseForm from "./EditWarehouseForm";
+import WarehouseForm from "./WarehouseForm";
 import CustomCard from "@/components/CustomCard";
 
 interface EditWarehouseProps {
@@ -18,7 +18,7 @@ const EditWarehouse = ({ warehouse }: EditWarehouseProps) => {
         isEdit={true}
         setFormDisabled={() => setFormDisabled(!formDisabled)}
       >
-        <EditWarehouseForm warehouse={warehouse} formDisabled={formDisabled} />
+        <WarehouseForm warehouse={warehouse} formDisabled={formDisabled} />
       </CustomCard>
     </>
   );

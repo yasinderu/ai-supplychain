@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import EditInventoryForm from "./EditInventoryForm";
+import InventoryForm from "./InventoryForm";
 import CustomCard from "../CustomCard";
 
 interface EditInventoryProps {
@@ -20,7 +20,7 @@ const EditInventory = (props: EditInventoryProps) => {
         setFormDisabled={() => setFormDisabled(!formDisabled)}
         formDisabled={formDisabled}
       >
-        <EditInventoryForm
+        <InventoryForm
           inventory={props.inventory}
           warehouses={props.warehouses}
           items={props.items}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import EditItemForm from "./EditItemForm";
+import ItemForm from "./ItemForm";
 import CustomCard from "../CustomCard";
 
 interface EditItemProps {
@@ -18,7 +18,7 @@ const EditItem = ({ item }: EditItemProps) => {
         formDisabled={formDisabled}
         setFormDisabled={() => setFormDisabled(!formDisabled)}
       >
-        <EditItemForm formDisabled={formDisabled} item={item} />
+        <ItemForm formDisabled={formDisabled} item={item} />
       </CustomCard>
     </>
   );

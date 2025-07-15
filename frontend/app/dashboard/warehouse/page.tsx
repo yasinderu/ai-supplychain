@@ -1,8 +1,8 @@
-import { DataTable } from "@/components/DataTable";
 import React from "react";
-import { columns } from "@/components/warehouse/columns";
-import { getWarehouseList } from "@/actions/warehouse.action";
+import { getWarehouseList, deleteWarehouse } from "@/actions/warehouse.action";
 import AddWarehouseModal from "@/components/warehouse/AddWarehouseModal";
+import WarehouseList from "@/components/warehouse/WarehouseList";
+import { WarehouseProvider } from "@/contexts/WarehouseContext";
 
 const getdata = async (): Promise<Warehouse[]> => {
   const warehouseData = await getWarehouseList();
@@ -14,13 +14,18 @@ const Warehouse = async () => {
   const data = await getdata();
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex justify-between mb-10 items-center">
-        <h1 className="text-4xl">Warehouse List</h1>
-        <AddWarehouseModal />
+    <WarehouseProvider>
+      <div className="container mx-auto py-10">
+        <div className="flex justify-between mb-10 items-center">
+          <h1 className="text-4xl">Warehouse List</h1>
+          <AddWarehouseModal />
+        </div>
+        <WarehouseList
+          deleteWarehouseAction={deleteWarehouse}
+          warehouses={data}
+        />
       </div>
-      <DataTable columns={columns} data={data} />
-    </div>
+    </WarehouseProvider>
   );
 };
 

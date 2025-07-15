@@ -34,6 +34,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useInventory } from "@/contexts/InventoryContext";
 
 interface AddInventoryModalProps {
   warehouses: Warehouse[];
@@ -48,6 +49,7 @@ const formSchema = z.object({
 });
 
 const AddInventoryModal = ({ items, warehouses }: AddInventoryModalProps) => {
+  const { addInventoryRecord } = useInventory();
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,6 +72,7 @@ const AddInventoryModal = ({ items, warehouses }: AddInventoryModalProps) => {
     const res = await addInventory(payload);
 
     if (res) {
+      addInventoryRecord(res);
       setOpen(false);
     }
   };

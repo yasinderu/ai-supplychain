@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/AppSidebar";
+import FloatingChatUI from "@/components/FloatingChatUI";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function dashboardLayout({
@@ -10,6 +11,7 @@ export default function dashboardLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarTrigger />
+      <FloatingChatUI isOnline={true} supportTitle="AI Assistant" />
       <main className="container mx-auto mt-10">{children}</main>
     </SidebarProvider>
   );

@@ -4,7 +4,7 @@ import { createContext, useContext, ReactNode, useState } from "react";
 
 interface ItemContextType {
   itemList: Item[];
-  setItemList: (iteList: Item[]) => void;
+  setItemList: (itemList: Item[]) => void;
   addItem: (item: Item) => void;
   removeItem: (itemId: string) => void;
 }

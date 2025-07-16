@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   postgres:
@@ -18,10 +18,6 @@ services:
     environment:
       - MODEL_ID=/models/flan-t5-base
       - DEVICE=gpu
-      # - HUGGING_FACE_HUB_TOKEN=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
-      # - NUM_SHARD=1
-      # - MAX_BATCH_PREFILL_TOKENS=12000
-      # - MAX_INPUT_LENGTH=1024
     ports:
       - "8080:80"
     deploy:
@@ -29,7 +25,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              count: all # Use all available GPUs
+              count: all
               capabilities: [gpu]
     volumes:
       - ./models:/models
@@ -42,8 +38,6 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
-    # command: >
-    #   sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"
     environment:
       - DATABASE_URL=postgresql://supplychain:password@postgres:5432/supplychain_db
       - TGI_URL=http://llm:80/generate
@@ -54,35 +48,24 @@ services:
       - ./models:/models
     networks:
       - sc_network
-  
-  # sentence_embedding_service:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     # Mount the local model directory into the container.
-  #     # The left side (./models/sentence-transformers/all-MiniLM-L6-v2)
-  #     # is the path on your host machine.
-  #     # The right side (/app/models/sentence-transformers/all-MiniLM-L6-v2)
-  #     # is the path inside the container.
-  #     - ./models/sentence-transformers/all-MiniLM-L6-v2:/app/models/sentence-transformers/all-MiniLM-L6-v2
-  #   environment:
-  #     # Optional: Explicitly tell Hugging Face libraries to run offline
-  #     - HF_HUB_OFFLINE=1
-  #     - TRANSFORMERS_OFFLINE=1
 
-  # frontend:
-  #   build: ./frontend
-  #   ports:
-  #     - "8000:80"
-  #   volumes:
-  #     - ./models:/models
-  #   networks:
-  #     - sc_network
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - API_ENDPOINT=http://ai-supplychain-backend-1:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+      - ./models:/models
+    networks:
+      - sc_network
 
 volumes:
   postgres_data:
-  # chroma_data:
 
 networks:
   sc_network:

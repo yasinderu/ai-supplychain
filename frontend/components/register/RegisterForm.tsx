@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { userSignin } from "@/actions/auth.action";
+import { userSignup } from "@/actions/auth.action";
 import { redirect, RedirectType, useRouter } from "next/navigation";
 
 const formSchema = z.object({
@@ -22,15 +22,19 @@ const formSchema = z.object({
   password: z
     .string()
     .min(2, { message: "Password must be at least 2 characters." }),
+  fullname: z
+    .string()
+    .min(4, { message: "Fullname must be at least 2 characters." }),
 });
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
       password: "",
+      fullname: "",
     },
   });
 
@@ -38,11 +42,12 @@ const LoginForm = () => {
     const payload = {
       username: values.username,
       password: values.password,
+      fullname: values.fullname,
     };
-    const token = await userSignin(payload);
+    const user = await userSignup(payload);
 
-    if (token) {
-      redirect("/dashboard", RedirectType.push);
+    if (user) {
+      redirect("/login", RedirectType.push);
     }
   };
 
@@ -65,10 +70,33 @@ const LoginForm = () => {
                     onChange={field.onChange}
                   />
                 </FormControl>
+                <FormDescription>
+                  This is your public display name.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="fullname"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Fullname</FormLabel>
+                <FormControl>
+                  <Input
+                    id="fullname"
+                    name="fullname"
+                    placeholder="fullname"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="password"
@@ -92,15 +120,15 @@ const LoginForm = () => {
           {/* <input type="hidden" name="redirectTo" value={callbackUrl} /> */}
           <div className="flex gap-2 items-center justify-end">
             <Button
-              onClick={() => router.push("/register")}
+              onClick={() => router.push("/login")}
               type="button"
               variant="outline"
               className="cursor-pointer"
             >
-              Signup
+              Login
             </Button>
             <Button type="submit" className="cursor-pointer">
-              Login
+              Singup
             </Button>
           </div>
         </form>
@@ -109,4 +137,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

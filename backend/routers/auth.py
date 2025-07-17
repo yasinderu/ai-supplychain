@@ -3,9 +3,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from sqlalchemy.orm import Session
 from auth import get_current_user, verify_password, create_access_token
-from schemas import UserBase, Token
+from schemas import UserBase, Token, User, UserCreate
 from database import get_db
-from repositories import get_user
+from repositories import get_user, create_user
 
 
 auth_router = APIRouter()
@@ -25,11 +25,23 @@ async def login(
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorect usernam or password",
+            detail="Incorect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(data={"sub": user.username, "user_id": str(user.id)})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@auth_router.post("/register", summary="Register user", status_code=status.HTTP_201_CREATED, response_model=User)
+async def register(user: UserCreate, db: Session = Depends(get_db)):
+    existingUser = get_user(db=db, user=user)
+
+    if existingUser:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already exists",
+        )
+    
+    return create_user(db=db, user=user)
 
 
 @auth_router.get("/user/me", summary="Get current user", response_model=UserBase)

@@ -14,6 +14,10 @@ interface UserFromToken {
   user_id: string;
 }
 
+interface UserSignup extends UserSignin {
+  fullname: string;
+}
+
 export const userSignin = async (user: UserSignin) => {
   try {
     const cookiesStore = await cookies();
@@ -31,5 +35,15 @@ export const userSignin = async (user: UserSignin) => {
   } catch (error) {
     console.log(error);
     throw new Error("Failed to authenticate user.");
+  }
+};
+
+export const userSignup = async (user: UserSignup) => {
+  try {
+    const res = await axios.post("/register", user);
+
+    return res.data;
+  } catch (error) {
+    console.log(error);
   }
 };

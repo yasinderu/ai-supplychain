@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from uuid import UUID
+from fastapi import HTTPException
 
 import models, schemas
 
@@ -43,8 +44,24 @@ def get_item(db: Session, item_id: UUID):
 
 def update_item(db: Session, update_item: models.Item, item_id: UUID):
     """Update item data in the database"""
-    pass
+    item = get_item(item_id=item_id, db=db)
 
+    if not item:
+        raise HTTPException(
+            status_code=404,
+            detail="Item not found"
+        )
+    item.name = update_item.name if update_item.name != None else item.name
+    item.description = update_item.description if update_item.description != None else item.description
+    item.sku = update_item.sku if update_item.sku != None else item.sku
+    item.category = update_item.category if update_item.category != None else item.category
+
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+
+    return item
+    
 
 def create_item(db: Session, item: schemas.ItemCreate):
     """Create or add new item data to database."""

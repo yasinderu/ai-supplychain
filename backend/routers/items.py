@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
-from schemas import Item, ItemCreate
-from repositories import get_item, get_items, create_item, delete_item_data
+from schemas import Item, ItemCreate, Item, ItemUpdate
+from repositories import get_item, get_items, create_item, delete_item_data, update_item
 from auth import get_current_user
 from database import get_db
 from uuid import UUID
@@ -39,8 +39,12 @@ async def get_item_detail(item_id: UUID, db: Session = Depends(get_db)):
 async def create_new_item(item: ItemCreate, db: Session = Depends(get_db)):
     return create_item(db, item)
 
+@item_router.patch("/{item_id}", summary="Update item", status_code=status.HTTP_200_OK, response_model=Item)
+async def item_update(item: ItemUpdate, item_id: UUID, db: Session = Depends(get_db)):
+    return update_item(item=item, db=db, item_id=item_id)
+
 @item_router.delete("/{item_id}", summary="Delete item", status_code=status.HTTP_200_OK)
-async def delete_item( item_id: UUID, db: Session=Depends(get_db)):
+async def delete_item(item_id: UUID, db: Session=Depends(get_db)):
     deleted_item = delete_item_data(db=db, item_id=item_id)
 
     if deleted_item is None:

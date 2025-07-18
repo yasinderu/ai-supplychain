@@ -2,7 +2,7 @@
 
 import { instance as axios } from "./axios.config";
 
-interface ItemCreate {
+interface ItemPayload {
   name: string;
   description?: string;
   sku: string;
@@ -39,7 +39,7 @@ export const getItemDetail = async (itemId: string) => {
   }
 };
 
-export const createItem = async (item: ItemCreate) => {
+export const createItem = async (item: ItemPayload) => {
   try {
     const response = await axios.post("/items", item);
 
@@ -47,6 +47,17 @@ export const createItem = async (item: ItemCreate) => {
     return data;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const updateItem = async (item: ItemPayload, itemId: string) => {
+  try {
+    const res = await axios.patch(`/items/${itemId}`, item);
+
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 

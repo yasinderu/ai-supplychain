@@ -7,6 +7,7 @@ interface ItemContextType {
   setItemList: (itemList: Item[]) => void;
   addItem: (item: Item) => void;
   removeItem: (itemId: string) => void;
+  updateItemList: (updatedItem: Item) => void;
 }
 
 interface ItemProviderProps {
@@ -33,11 +34,20 @@ export const ItemProvider = ({ children }: ItemProviderProps) => {
     setItems((currentList) => currentList.filter((item) => item.id !== itemId));
   };
 
+  const updateItemList = (updatedItem: Item): void => {
+    setItemList(
+      itemList.map((item) =>
+        item.id === updatedItem.id ? { ...updatedItem } : item
+      )
+    );
+  };
+
   const value: ItemContextType = {
     itemList,
     setItemList,
     addItem,
     removeItem,
+    updateItemList,
   };
 
   return <ItemContext.Provider value={value}>{children}</ItemContext.Provider>;

@@ -72,7 +72,10 @@ class ItemBase(BaseModel):
 
 class ItemCreate(ItemBase):
     """Schema for creating new item."""
+    pass
 
+class ItemUpdate(ItemBase):
+    """Schema for updating item"""
     pass
 
 

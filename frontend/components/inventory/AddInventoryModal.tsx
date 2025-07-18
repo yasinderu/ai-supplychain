@@ -178,7 +178,7 @@ const AddInventoryModal = ({ items, warehouses }: AddInventoryModalProps) => {
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Item Category</FormLabel>
+                      <FormLabel>Status</FormLabel>
                       <FormControl>
                         <Input
                           id="status"

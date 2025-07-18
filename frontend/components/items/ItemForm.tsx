@@ -14,6 +14,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { updateItem } from "@/actions/item.action";
+import { useItem } from "@/contexts/ItemContext";
+import { useRouter } from "next/navigation";
 
 interface EditItemFormProps {
   item: Item;
@@ -28,6 +31,8 @@ const formSchema = z.object({
 });
 
 const EditItemForm = ({ item, formDisabled }: EditItemFormProps) => {
+  const { updateItemList } = useItem();
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,7 +44,19 @@ const EditItemForm = ({ item, formDisabled }: EditItemFormProps) => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    const payload = {
+      name: values.name,
+      description: values.description,
+      sku: values.sku,
+      category: values.category,
+    };
+
+    const result = await updateItem(payload, item.id);
+
+    if (result) {
+      updateItemList(result);
+      router.push("/dashboard/items ");
+    }
   };
   return (
     <div>

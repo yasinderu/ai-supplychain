@@ -42,6 +42,9 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - TGI_URL=${TGI_URL}
       - LOCAL_SENTENCE_VARIABLE_MODEL_DIR=${LOCAL_SENTENCE_VARIABLE_MODEL_DIR}
+      - AUTH_SECRET_KEY=${AUTH_SECRET_KEY}
+      - AUTH_ALGORITHM=${AUTH_ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
     restart: on-failure
     volumes:
       - ./backend:/app
@@ -49,20 +52,20 @@ services:
     networks:
       - sc_network
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - API_ENDPOINT=${API_ENDPOINT}
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
-      - ./models:/models
-    networks:
-      - sc_network
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=${NODE_ENV}
+  #     - API_ENDPOINT=${API_ENDPOINT}
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+  #     - /app/.next
+  #     - ./models:/models
+  #   networks:
+  #     - sc_network
 
 volumes:
   postgres_data:

@@ -4,13 +4,14 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+import os
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = "83922956d7d376d40d7a7167f390e298"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+SECRET_KEY  = os.environ["AUTH_SECRET_KEY"]
+ALGORITHM = os.environ["AUTH_ALGORITHM"]
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

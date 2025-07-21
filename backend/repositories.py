@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from uuid import UUID
 from fastapi import HTTPException
+from sqlalchemy import desc
 
 import models, schemas
 
@@ -34,7 +35,7 @@ def create_user(db: Session, user: schemas.UserCreate):
 ## Repositories for item
 def get_items(db: Session, skip: int = 0, limit: int = 100):
     """Retrieve item data from database"""
-    return db.query(models.Item).offset(skip).limit(limit).all()
+    return db.query(models.Item).order_by(desc(models.Item.created_at)).offset(skip).limit(limit).all()
 
 
 def get_item(db: Session, item_id: UUID):
@@ -180,7 +181,7 @@ def update_inventory(
 ## Repositories for location
 def get_locations(db: Session, skip: int = 0, limit: int = 100):
     """Retrieve list of location from database"""
-    return db.query(models.Location).offset(skip).limit(limit)
+    return db.query(models.Location).order_by(desc(models.Location.created_at)).offset(skip).limit(limit)
 
 
 def get_location_detail(db: Session, location_id: UUID):

@@ -31,7 +31,7 @@ const formSchema = z.object({
 });
 
 const EditItemForm = ({ item, formDisabled }: EditItemFormProps) => {
-  const { updateItemList } = useItem();
+  // const { updateItemList } = useItem();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,7 +54,7 @@ const EditItemForm = ({ item, formDisabled }: EditItemFormProps) => {
     const result = await updateItem(payload, item.id);
 
     if (result) {
-      updateItemList(result);
+      // updateItemList(result);
       router.push("/dashboard/items ");
     }
   };

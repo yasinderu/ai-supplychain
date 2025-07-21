@@ -3,6 +3,7 @@ import AIChatUI from "@/components/AIChat";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { getAiChatHistory } from "@/actions/ai.action";
 import { cookies } from "next/headers";
+// import { redirect } from "next/navigation";
 
 export default async function dashboardLayout({
   children,
@@ -12,6 +13,13 @@ export default async function dashboardLayout({
   const cookiesStore = await cookies();
   const userId = cookiesStore.get("user_id")?.value;
   const aiChatHistory = await getAiChatHistory(userId);
+
+  // const logoutHandler = async () => {
+  //   cookiesStore.delete("session_token");
+  //   cookiesStore.delete("user_id");
+
+  //   redirect("/login");
+  // };
 
   return (
     <SidebarProvider>

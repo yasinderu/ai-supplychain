@@ -12,6 +12,7 @@ interface UserSignin {
 
 interface UserFromToken {
   user_id: string;
+  exp: number;
 }
 
 interface UserSignup extends UserSignin {
@@ -28,7 +29,13 @@ export const userSignin = async (user: UserSignin) => {
     const response = await axios.post("/token", stringify(payload));
     const userDetail: UserFromToken = jwtDecode(response.data.access_token);
 
-    cookiesStore.set("session_token", response.data.access_token);
+    const tokenExpireDate = new Date(userDetail.exp * 1000);
+
+    cookiesStore.set({
+      name: "session_token",
+      value: response.data.access_token,
+      expires: tokenExpireDate,
+    });
     cookiesStore.set("user_id", userDetail.user_id);
 
     return response.data;

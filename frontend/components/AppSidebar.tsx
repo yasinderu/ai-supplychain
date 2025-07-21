@@ -1,5 +1,3 @@
-import { Home, Inbox, Search, ClipboardList, Warehouse } from "lucide-react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -10,37 +8,24 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { SidebarItem } from "@/data";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-// Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "/dashboard",
-    icon: Home,
-  },
-  {
-    title: "Items",
-    url: "/dashboard/items",
-    icon: Inbox,
-  },
-  {
-    title: "Inventory",
-    url: "/dashboard/inventory",
-    icon: ClipboardList,
-  },
-  {
-    title: "Warehouse",
-    url: "/dashboard/warehouse",
-    icon: Warehouse,
-  },
-  {
-    title: "History",
-    url: "#",
-    icon: Search,
-  },
-];
+interface AppSidebarProps {
+  logout?: () => void;
+}
 
 export function AppSidebar() {
+  // const cookiesStore = await cookies();
+  const menuitems = SidebarItem;
+
+  // const logoutHandler = async () => {
+  //   cookiesStore.delete("session_token");
+  //   cookiesStore.delete("user_id");
+
+  //   redirect("/login");
+  // };
   return (
     <Sidebar>
       <SidebarContent>
@@ -48,7 +33,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>AI Supplychain</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {menuitems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
